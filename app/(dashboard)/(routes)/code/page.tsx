@@ -1,20 +1,21 @@
 "use client";
 
+import ReactMarkdown from "react-markdown";
 import axios from "axios";
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-import { ChatCompletionRequestMessage } from "openai";
-
-import { MessageSquare } from "lucide-react"
+import { Code, MessageSquare } from "lucide-react"
 import { cn } from "@/lib/utils";
 
+import { useForm } from "react-hook-form"
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form"
+
+import { ChatCompletionRequestMessage } from "openai";
 
 
-import { formSchema } from "./constants"
+import { formSchema } from "./constants";
 
 import { 
             Form, 
@@ -22,7 +23,6 @@ import {
             FormField, 
             FormItem 
         } from "@/components/ui/form";
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/heading"
@@ -31,7 +31,9 @@ import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
 
-const ConversationPage = () => {
+
+
+const CodePage = () => {
     const router = useRouter()
     const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([])
     const form = useForm<z.infer<typeof formSchema>>({
@@ -51,7 +53,9 @@ const ConversationPage = () => {
             }
             const newMessages = [...messages, userMessage]
 
-            const response = await axios.post("/api/conversation", {
+            
+
+            const response = await axios.post("/api/code", {
                 messages: newMessages,
             });
 
@@ -70,11 +74,11 @@ const ConversationPage = () => {
   return (
     <div>
         <Heading
-            title="Conversation"
-            description="Our most advanced conversation model"
-            icon={MessageSquare}
-            iconColor="text-violet-500"
-            bgColor="bg-violet-500/10"
+            title="Code Generation"
+            description="Generate code using AI prompts"
+            icon={Code}
+            iconColor="text-green-700"
+            bgColor="bg-green-700/10"
         />
         <div>
             <div>
@@ -102,7 +106,7 @@ const ConversationPage = () => {
                                         <Input
                                             className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                                             disabled={isLoding}
-                                            placeholder="who is serdar ?"
+                                            placeholder="Simple droplist using react"
                                             {...field}
                                         />
                                     </FormControl>
@@ -132,11 +136,23 @@ const ConversationPage = () => {
                                         "p-8 w-full flex items-start gap-x-8 rounded-lg",
                                         messages.role === "user" ? "bg-white border border-black/10" : "bg-muted"
                                         )}
-                                    >
-                                        {messages.role === "user" ? <UserAvatar/> :<BotAvatar/>}
-                                        <p className="test-sm">
-                                        {messages.content}
-                                        </p>
+                                    > 
+                                        {messages.role === "user" ? <UserAvatar/> :<BotAvatar/>} 
+                                        <ReactMarkdown 
+                                            components={{
+                                                pre: ({ node, ...props }) => (
+                                                    <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
+                                                        <pre {...props}/>
+                                                    </div>
+                                                ),
+                                                code: ({node, ...props}) => (
+                                                    <code className="bg-black/10 rounded-lg p-1" {...props}/>
+                                                )
+                                            }}
+                                            className="text-sm overflow-hidden leading-7"
+                                        >
+                                            {messages.content || ""}
+                                        </ReactMarkdown>
                                     </div>
                                 ))}
                     </div>          
@@ -146,4 +162,4 @@ const ConversationPage = () => {
   )
 }
 
-export default ConversationPage
+export default CodePage
