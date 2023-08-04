@@ -31,6 +31,7 @@ import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/user-avatar";
 import { BotAvatar } from "@/components/bot-avatar";
 import { useProModal } from "@/hooks/use-pro-modal";
+import { toast } from "react-hot-toast";
 
 
 
@@ -67,6 +68,8 @@ const CodePage = () => {
         } catch (error:any) {
             if (error?.response?.status === 403){
                 proModal.onOpen();
+            }else {
+                toast.error("Something went wrong !")
             }
             console.log(error)
         } finally {
@@ -145,12 +148,12 @@ const CodePage = () => {
                                         <ReactMarkdown 
                                             components={{
                                                 pre: ({ node, ...props }) => (
-                                                    <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
+                                                    <div className="overflow-auto w-full my-2 bg-black font-extrabold text-green-400 p-2 rounded-lg">
                                                         <pre {...props}/>
                                                     </div>
                                                 ),
                                                 code: ({node, ...props}) => (
-                                                    <code className="bg-black/10 rounded-lg p-1" {...props}/>
+                                                    <code className="bg-black/5 font-extrabold rounded-lg p-1" {...props}/>
                                                 )
                                             }}
                                             className="text-sm overflow-hidden leading-7"
